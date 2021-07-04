@@ -1,4 +1,6 @@
-﻿namespace CookieService
+﻿using System;
+
+namespace CookieService
 {
     partial class ProjectInstaller
     {
@@ -35,10 +37,12 @@
             // 
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
+            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.User;
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "Service1";
+            this.serviceInstaller1.ServiceName = "ServiceExam";
+            this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
             // 
@@ -46,6 +50,30 @@
             this.serviceProcessInstaller1,
             this.serviceInstaller1});
 
+            this.AfterInstall += ProjectInstaller_AfterInstall;
+            this.AfterRollback += ProjectInstaller_AfterRollback;
+            this.AfterUninstall += ProjectInstaller_AfterUninstall;
+        }
+
+        private void ProjectInstaller_AfterUninstall(object sender, System.Configuration.Install.InstallEventArgs e)
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("Служба деинсталлирована.");
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
+        private void ProjectInstaller_AfterRollback(object sender, System.Configuration.Install.InstallEventArgs e)
+        {
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Ошибка при установке службы.");
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
+        private void ProjectInstaller_AfterInstall(object sender, System.Configuration.Install.InstallEventArgs e)
+        {
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.WriteLine("Служба установлена.");
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
         #endregion
