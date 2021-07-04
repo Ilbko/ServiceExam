@@ -6,14 +6,16 @@ namespace CookieService
 {
     public abstract class Logger
     {
-        FileSystemWatcher watcher;
-        bool enabled = true;
-        string logPath;
+        protected FileSystemWatcher watcher;
+        protected bool enabled = true;
+        public string logPath;
+        public string cookiePath;
 
         public Logger(string cookiePath, string logPath)
         {
             watcher = new FileSystemWatcher(cookiePath);
             this.logPath = logPath;
+            this.cookiePath = cookiePath;
             watcher.Deleted += Watcher_Deleted;
             watcher.Created += Watcher_Created;
             watcher.Changed += Watcher_Changed;
@@ -33,35 +35,35 @@ namespace CookieService
             enabled = false;
         }
 
-        public void Watcher_Renamed(object sender, RenamedEventArgs e)
+        protected void Watcher_Renamed(object sender, RenamedEventArgs e)
         {
             string fileEvent = "переименован в " + e.FullPath;
             string filePath = e.OldFullPath;
             RecordEntry(fileEvent, filePath);
         }
 
-        public void Watcher_Changed(object sender, FileSystemEventArgs e)
+        protected void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "изменен";
             string filePath = e.FullPath;
             RecordEntry(fileEvent, filePath);
         }
 
-        public void Watcher_Created(object sender, FileSystemEventArgs e)
+        protected void Watcher_Created(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "создан";
             string filePath = e.FullPath;
             RecordEntry(fileEvent, filePath);
         }
 
-        public void Watcher_Deleted(object sender, FileSystemEventArgs e)
+        protected void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "удален";
             string filePath = e.FullPath;
             RecordEntry(fileEvent, filePath);
         }
 
-        private void RecordEntry(string fileEvent, string filePath)
+        protected void RecordEntry(string fileEvent, string filePath)
         {
             lock (this)
             {
@@ -77,7 +79,7 @@ namespace CookieService
 
     public class GoogleLogger : Logger
     {     
-        public GoogleLogger() : base(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Profile 55\Cookies",
+        public GoogleLogger() : base(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Default",
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\GoogleCookieServiceLog.txt"){}
     }
 }

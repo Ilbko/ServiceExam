@@ -13,7 +13,7 @@ namespace CookieService
 {
     public partial class Service1 : ServiceBase
     {
-        GoogleLogger googleLogger;
+        private GoogleLogger googleLogger;
         public Service1()
         {
             InitializeComponent();
