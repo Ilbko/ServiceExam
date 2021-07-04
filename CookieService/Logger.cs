@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace CookieService
 {
@@ -17,6 +18,19 @@ namespace CookieService
             watcher.Created += Watcher_Created;
             watcher.Changed += Watcher_Changed;
             watcher.Renamed += Watcher_Renamed;            
+        }
+        public void Start()
+        {
+            watcher.EnableRaisingEvents = true;
+            while (enabled)
+            {
+                Thread.Sleep(60000);
+            }
+        }
+        public void Stop()
+        {
+            watcher.EnableRaisingEvents = false;
+            enabled = false;
         }
 
         public void Watcher_Renamed(object sender, RenamedEventArgs e)

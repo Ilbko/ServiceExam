@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CookieService
@@ -24,11 +25,14 @@ namespace CookieService
 
         protected override void OnStart(string[] args)
         {
-            googleLogger = new GoogleLogger();
+            this.googleLogger = new GoogleLogger();
+            Thread googleLoggerThread = new Thread(new ThreadStart(this.googleLogger.Start));
+            googleLoggerThread.Start();
         }
 
         protected override void OnStop()
         {
+            this.googleLogger.Stop();
         }
     }
 }
