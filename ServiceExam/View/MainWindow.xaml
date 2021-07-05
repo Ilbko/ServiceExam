@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ServiceExam"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Background="GreenYellow">
         <Grid.Resources>
             <Style TargetType="Button">
                 <Setter Property="Padding" Value="10"></Setter>
@@ -26,9 +26,9 @@
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Grid.Column="0" Command="{Binding GoogleCommand}">Chrome</Button>
-        <Button Grid.Row="0" Grid.Column="1">Mozilla</Button>
-        <Button Grid.Row="0" Grid.Column="2">Opera</Button>
+        <Button Grid.Row="0" Grid.Column="1" Command="{Binding MozillaCommand}">Mozilla</Button>
+        <Button Grid.Row="0" Grid.Column="2" Command="{Binding OperaCommand}">Opera</Button>
 
-        <DataGrid x:Name="CookiesDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0, 15, 0, 15"></DataGrid>
+        <DataGrid Foreground="HotPink" x:Name="CookiesDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0, 15, 0, 15"></DataGrid>
     </Grid>
 </Window>

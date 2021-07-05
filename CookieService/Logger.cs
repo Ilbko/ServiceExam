@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace CookieService
 {
+    //Бесполезно, поскольку локальная служба не может работать с классами. (сетевая может!)
     public abstract class Logger
     {
         protected FileSystemWatcher watcher;
