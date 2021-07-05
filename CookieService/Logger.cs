@@ -13,7 +13,7 @@ namespace CookieService
 
         public Logger(string cookiePath, string logPath)
         {
-            watcher = new FileSystemWatcher(cookiePath);
+            this.watcher = new FileSystemWatcher(cookiePath);
             this.logPath = logPath;
             this.cookiePath = cookiePath;
             watcher.Deleted += Watcher_Deleted;

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿using CookieService;
+using Dapper;
+using System;
 using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using CookieService;
-using Dapper;
 
 namespace ServiceExam.Model
 {
@@ -31,7 +26,9 @@ namespace ServiceExam.Model
             string connStr = $"Data Source = {childLogger.cookiePath + @"\Cookies"}; ProviderName = System.Data.SQLite";
             using (SQLiteConnection connection = new SQLiteConnection(connStr))
             {
-                GC.Collect(GC.GetGeneration(cookiesDataGrid.ItemsSource));
+                if (cookiesDataGrid.ItemsSource != null)
+                    GC.Collect(GC.GetGeneration(cookiesDataGrid.ItemsSource));
+
                 cookiesDataGrid.ItemsSource = connection.Query("SELECT * FROM cookies").ToList();
             }
         }
